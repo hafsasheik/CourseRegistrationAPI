@@ -10,10 +10,10 @@ namespace CourseRegistrationAPI.Data
 {
     public class RegCourseDBContext: DbContext
     {
-        public RegCourseDBContext(DbContextOptions options)
+        public RegCourseDBContext(DbContextOptions<RegCourseDBContext> options)
         : base(options)
         {
-
+            
         }
 
         public DbSet<Course> Courses { get; set; }
