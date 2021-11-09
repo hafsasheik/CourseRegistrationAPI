@@ -8,7 +8,7 @@ namespace CourseRegistrationAPI.Models
     public class Registration
     {
         public int RegistrationId { get; set; }
-        public ICollection<User> Users { get; set; }
-        public ICollection<Course> Courses { get; set; }
+        public User User { get; set; }
+        public Course Course { get; set; }
     }
 }

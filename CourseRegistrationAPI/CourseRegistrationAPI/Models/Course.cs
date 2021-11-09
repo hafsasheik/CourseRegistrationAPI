@@ -12,6 +12,8 @@ namespace CourseRegistrationAPI.Models
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public int StudyPace { get; set; }
+        public ICollection<Registration> Registrations { get; set; }
+
 
     }
 }
