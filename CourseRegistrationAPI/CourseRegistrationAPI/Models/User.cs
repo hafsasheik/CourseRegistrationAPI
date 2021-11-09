@@ -21,6 +21,7 @@ namespace CourseRegistrationAPI.Models
         [Required]
         [MaxLength(50)]
         public string Password { get; set; }
+        
         public ICollection<Registration> Registrations { get; set; }
 
     }

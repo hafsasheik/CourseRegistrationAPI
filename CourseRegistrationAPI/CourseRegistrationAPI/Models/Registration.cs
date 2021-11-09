@@ -12,5 +12,9 @@ namespace CourseRegistrationAPI.Models
         public int RegistrationId { get; set; }
         public User User { get; set; }
         public Course Course { get; set; }
+        [Key]
+        public int UserId { get; set; }
+        [Key]
+        public int CourseId { get; set; }
     }
 }
