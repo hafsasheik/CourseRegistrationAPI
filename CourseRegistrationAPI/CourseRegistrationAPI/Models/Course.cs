@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 namespace CourseRegistrationAPI.Models
 {
     public class Course
+        //TODO: Lägga till en info propp? 
     {
         [Key]
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
@@ -25,5 +26,6 @@ namespace CourseRegistrationAPI.Models
         public int StudyPace { get; set; }
 
         public ICollection<Registration> Registrations { get; set; }
+        public string CourseInfo { get; set; }
     }
 }

@@ -1,9 +1,12 @@
+using CourseRegistrationAPI.Data;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -13,7 +16,24 @@ namespace CourseRegistrationAPI
     {
         public static void Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+            //Tvingar fram databas, ifall den inte existerar redan.
+            var host = CreateHostBuilder(args).Build();
+            using (var scope = host.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+
+                try
+                {
+                    RegCourseDBContext _context = services.GetRequiredService<RegCourseDBContext>();
+
+                    _context.Database.EnsureCreated();
+                }
+                catch (Exception epicFail)
+                {
+                    Debug.WriteLine(epicFail.Message);
+                }
+            }
+            host.Run();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
