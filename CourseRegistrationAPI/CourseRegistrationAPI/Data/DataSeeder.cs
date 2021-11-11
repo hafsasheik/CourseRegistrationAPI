@@ -9,8 +9,7 @@ namespace CourseRegistrationAPI.Data
 {
     public static class DataSeeder
     {
-        //TODO: Ta reda på hur man seedar en redan migrerad databas!!
-        //TODO: 
+        //TODO: Ta reda på hur man seedar en redan migrerad databas, lösningen finns i program!!
         public static void Seed(this ModelBuilder modelbuilder)
         {       
 
