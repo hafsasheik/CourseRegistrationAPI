@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using CourseRegistrationAPI.Services;
 
 namespace CourseRegistrationAPI
 {
@@ -59,6 +60,7 @@ namespace CourseRegistrationAPI
                         ValidateAudience = false,
                     };
                 });
+            services.AddScoped<IGoogleAuthService, GoogleAuthService>();
         }
 
 
