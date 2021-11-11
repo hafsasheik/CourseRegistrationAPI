@@ -1,11 +1,14 @@
 ﻿using CourseRegistrationAPI.Data;
 using CourseRegistrationAPI.Models;
+using CourseRegistrationAPI.Models.DTOs;
 using CourseRegistrationAPI.Services;
 using Google.Apis.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -31,6 +34,15 @@ namespace CourseRegistrationAPI.Controllers
         {
             _context = context;
             _authService = authService;
+            //_context.Database.EnsureCreated();
+            //User u = new User();
+            
+            //u.FirstName = "Erik";
+            //u.LastName = "Sundberg";
+            //u.Email = "sten.erik.sundberg@gmail.com";
+            //u.Password = "Lösen!";
+            //_context.Users.Add(u);
+            //_context.SaveChanges();
         }
         
         // POST api/<AuthController>
@@ -59,8 +71,10 @@ namespace CourseRegistrationAPI.Controllers
         }
 
         [HttpPost("googlelogin")]
-        public async Task<IActionResult> GoogleLogin([FromBody] string googleToken )
+        public async Task<IActionResult> GoogleLogin([FromBody]GoogleTokenDTO dto)
         {
+
+            string googleToken = dto.GoogleToken;
             if (String.IsNullOrWhiteSpace(googleToken))
                 return BadRequest("No token received");
 

@@ -20,7 +20,9 @@ namespace CourseRegistrationAPI
             string json = File.ReadAllText("appsettings.json");
             JObject jo = JObject.Parse(json);
             AppsettingsSingleton.Instance = new();
-            AppsettingsSingleton.Instance = JsonConvert.DeserializeObject<AppsettingsSingleton>(jo["Appsettings"].ToString());
+
+            AppsettingsSingleton.Instance = JsonConvert.DeserializeObject<AppsettingsSingleton>(jo["AppSettings"].ToString());
+            
             CreateHostBuilder(args).Build().Run();
         }
 
