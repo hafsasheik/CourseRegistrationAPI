@@ -37,9 +37,16 @@ namespace CourseRegistrationAPI.Repository
             
         }
 
-        public User AuthenticateUser(string username, string password)
+        public User AuthenticateUser(string Email, string password)
         {
-            throw new NotImplementedException();
+            var user = _db.Users.SingleOrDefault(x => x.Email == Email && x.Password == password);
+
+            if (user == null)
+            {
+                return null;
+            }
+
+            return user; 
         }
 
 
@@ -60,7 +67,7 @@ namespace CourseRegistrationAPI.Repository
 
         public ICollection<Registration> GetCoursesByUser(int userid)
         {
-            var user = _db.Users.SingleOrDefault(x => x.UserId == userid);
+            //var user = _db.Users.SingleOrDefault(x => x.UserId == userid);
             return _db.Registrations.Where(c => c.UserId == userid).Include(c => c.Course).ToList();
         }
 

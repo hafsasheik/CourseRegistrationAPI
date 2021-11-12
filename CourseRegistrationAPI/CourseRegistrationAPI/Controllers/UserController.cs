@@ -22,6 +22,15 @@ namespace CourseRegistrationAPI.Controllers
         //Authenticate user action with google of some sort..
 
 
+        [HttpGet]
+        public IActionResult GetCoursesForUser(int userid) 
+        {
+            var Courses = _uRepo.GetCoursesByUser(userid);
+            return Ok(Courses); 
+        }
+
+
+
         [HttpPost("registerUser")]
         public IActionResult RegisterUser([FromBody] User addeduser)
         {
@@ -46,14 +55,24 @@ namespace CourseRegistrationAPI.Controllers
         [HttpPost("registerCourse")]
         public IActionResult RegisterCourseByUser([FromBody] Registration registration)
         {
-            throw new NotImplementedException();
+            if (registration == null)
+            {
+                return BadRequest(new { message = "Registration to course failed" });
+            }
+
+            _uRepo.RegisterToCourseByUser(registration.CourseId, registration.UserId);
+
+
+            return CreatedAtAction("GetCoursesForUser", registration);
 
         }
 
         [HttpDelete]
         public IActionResult UnRegisterCourseByUser([FromBody] Registration registration)
         {
-            throw new NotImplementedException();
+            _uRepo.UnRegisterToCourseByUser(registration.CourseId, registration.UserId);
+
+            return Ok(); 
         }
 
     }
