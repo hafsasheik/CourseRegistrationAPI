@@ -37,7 +37,7 @@ namespace CourseRegistrationAPI.Data
         {
             modelBuilder.Entity<Registration>()
             .HasKey(s => new { s.UserId, s.CourseId });
-
+            modelBuilder.Seed();
             base.OnModelCreating(modelBuilder);
         }
 
