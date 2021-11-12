@@ -1,7 +1,10 @@
-﻿using System;
+﻿using Microsoft.IdentityModel.Tokens;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -82,6 +85,20 @@ namespace CourseRegistrationAPI.Services
                 Debug.WriteLine(ex.Message);
             }
             return UTF8Encoding.UTF8.GetString(resultArray);
+        }
+
+        public static string CreateToken(int userId)
+        {
+            var claims = new[]
+                    {
+                        new Claim(JwtRegisteredClaimNames.Sub, SecurityService.Encrypt(AppsettingsSingleton.Instance.JwtEmailEncryption, userId.ToString())),
+                        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                    };
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(AppsettingsSingleton.Instance.JwtSecret));
+            var tokenCreds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            var token = new JwtSecurityToken(claims: claims, expires: DateTime.Now.AddMinutes(55), signingCredentials: tokenCreds);
+            return new JwtSecurityTokenHandler().WriteToken(token);
+
         }
     }
 }

@@ -58,7 +58,7 @@ namespace CourseRegistrationAPI.Services
                     filterContext.Result = new StatusCodeResult(403);
 
                 filterContext.HttpContext.Items["extractId"] = id; //För att kunna komma åt det aktuella user-id direkt från filtret...
-
+                filterContext.HttpContext.Items["newToken"] = SecurityService.CreateToken(int.Parse(id)).ToString(); //Så att man kan lägga den i headern på svaret?
 
             }
             catch (Exception ex)

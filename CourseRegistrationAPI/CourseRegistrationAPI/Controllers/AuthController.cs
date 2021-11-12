@@ -4,6 +4,7 @@ using CourseRegistrationAPI.Models.DTOs;
 using CourseRegistrationAPI.Services;
 using Google.Apis.Auth;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -34,15 +35,7 @@ namespace CourseRegistrationAPI.Controllers
         {
             _context = context;
             _authService = authService;
-            //_context.Database.EnsureCreated();
-            //User u = new User();
-            
-            //u.FirstName = "Erik";
-            //u.LastName = "Sundberg";
-            //u.Email = "sten.erik.sundberg@gmail.com";
-            //u.Password = "Lösen!";
-            //_context.Users.Add(u);
-            //_context.SaveChanges();
+
         }
         
         // POST api/<AuthController>
@@ -57,8 +50,12 @@ namespace CourseRegistrationAPI.Controllers
                 User u = await _context.Users.FirstOrDefaultAsync(u => u.Email == creds.Email);
                 if(u.Password == creds.Password)
                 {
-                    string token = CreateToken(u.UserId);
-                    return Ok(token);
+                    string token = SecurityService.CreateToken(u.UserId);
+
+
+                    var response = Ok(token); //ES håller på att fixa så att headern på svaret får en ny token.
+                    
+                    return response;
                 }
             }
             catch(Exception epicFail)
@@ -72,7 +69,7 @@ namespace CourseRegistrationAPI.Controllers
 
         [HttpPost("googlelogin")]
         public async Task<IActionResult> GoogleLogin([FromBody]GoogleTokenDTO dto)
-        {
+            {
 
             string googleToken = dto.GoogleToken;
             if (String.IsNullOrWhiteSpace(googleToken))
@@ -83,7 +80,7 @@ namespace CourseRegistrationAPI.Controllers
                 User u = await _authService.AuthenticateUserAsync(googleToken);
                 if(u!= null)
                 {
-                    return Ok(CreateToken(u.UserId));
+                    return Ok(SecurityService.CreateToken(u.UserId));
                 }
             }
             catch(Exception epicFail)
@@ -96,19 +93,7 @@ namespace CourseRegistrationAPI.Controllers
         }
 
 
-        private string CreateToken(int userId)
-        {
-            var claims = new[]
-                    {
-                        new Claim(JwtRegisteredClaimNames.Sub, SecurityService.Encrypt(AppsettingsSingleton.Instance.JwtEmailEncryption, userId.ToString())),
-                        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-                    };
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(AppsettingsSingleton.Instance.JwtSecret));
-            var tokenCreds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var token = new JwtSecurityToken(claims: claims, expires: DateTime.Now.AddMinutes(55), signingCredentials: tokenCreds);
-            return new JwtSecurityTokenHandler().WriteToken(token);
-
-        }
+        
 
     }
 }
