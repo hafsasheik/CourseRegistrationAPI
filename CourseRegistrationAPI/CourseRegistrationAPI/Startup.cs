@@ -1,4 +1,6 @@
 using CourseRegistrationAPI.Data;
+using CourseRegistrationAPI.Repository;
+using CourseRegistrationAPI.Repository.IRepository;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -34,6 +36,8 @@ namespace CourseRegistrationAPI
         {
             services.AddDbContext<RegCourseDBContext>(opts =>
             opts.UseSqlServer(Configuration.GetConnectionString("sqlConnection")));
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<ICourseRepository, CourseRepository>();
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
