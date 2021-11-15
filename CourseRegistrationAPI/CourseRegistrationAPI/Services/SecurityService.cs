@@ -92,11 +92,12 @@ namespace CourseRegistrationAPI.Services
             var claims = new[]
                     {
                         new Claim(JwtRegisteredClaimNames.Sub, SecurityService.Encrypt(AppsettingsSingleton.Instance.JwtEmailEncryption, userId.ToString())),
-                        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()) //Kan användas för att kolla om jwt har blivit kopierad någon gång.
+                                                                                          //Isf ska den lagras i någon cache...
                     };
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(AppsettingsSingleton.Instance.JwtSecret));
             var tokenCreds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var token = new JwtSecurityToken(claims: claims, expires: DateTime.Now.AddMinutes(55), signingCredentials: tokenCreds);
+            var token = new JwtSecurityToken(claims: claims, expires: DateTime.Now.AddMinutes(10), signingCredentials: tokenCreds);
             return new JwtSecurityTokenHandler().WriteToken(token);
 
         }

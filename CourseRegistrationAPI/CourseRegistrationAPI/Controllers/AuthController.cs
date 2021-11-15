@@ -38,7 +38,7 @@ namespace CourseRegistrationAPI.Controllers
 
         }
         
-        // POST api/<AuthController>
+        // POST api/auth/login
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginCredsDTO creds)
         {
@@ -53,8 +53,8 @@ namespace CourseRegistrationAPI.Controllers
                     string token = SecurityService.CreateToken(u.UserId);
 
 
-                    var response = Ok(token); //ES håller på att fixa så att headern på svaret får en ny token.
-                    
+                    var response = Ok(token); //ES håller på att fixa så att headern på svaret får en ny token. Se kommentaren nedan
+                    //HttpContext.Response.Headers.Add("NewToken", HttpContext.Items["newToken"].ToString());
                     return response;
                 }
             }
@@ -66,7 +66,7 @@ namespace CourseRegistrationAPI.Controllers
 
             return Forbid("Wrong creds!");
         }
-
+        //api/auth/googlelogin
         [HttpPost("googlelogin")]
         public async Task<IActionResult> GoogleLogin([FromBody]GoogleTokenDTO dto)
             {
