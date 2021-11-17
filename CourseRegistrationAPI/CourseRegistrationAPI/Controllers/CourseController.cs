@@ -26,8 +26,5 @@ namespace CourseRegistrationAPI.Controllers
             var Courses = _uRepo.GetCourses();
             return Ok(Courses);
         }
-
-     
-
     }
 }

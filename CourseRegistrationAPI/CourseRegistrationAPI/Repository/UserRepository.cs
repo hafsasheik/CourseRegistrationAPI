@@ -94,12 +94,6 @@ namespace CourseRegistrationAPI.Repository
             return Save();
         }
 
-        public int CountRegistrations(int courseid)
-        {
-            return _db.Registrations.Where(r => r.CourseId == courseid).ToList().Count();
-        }
-
-
 
         public bool Save()
         {

@@ -52,7 +52,6 @@ namespace CourseRegistrationAPI.Controllers
         }
 
 
-
         [HttpPost("registerCourse")]
         public IActionResult RegisterCourseByUser([FromBody] Registration registration)
         {
@@ -61,17 +60,12 @@ namespace CourseRegistrationAPI.Controllers
                 return BadRequest(new { message = "Registration to course failed" });
             }
 
-            if (_uRepo.CountRegistrations(registration.CourseId) == 20)
-            {
-                return BadRequest(new { message = "Course is full" });
-            }
-
             _uRepo.RegisterToCourseByUser(registration.CourseId, registration.UserId);
 
+
             return CreatedAtAction("GetCoursesForUser", registration);
+
         }
-
-
 
         [HttpDelete]
         public IActionResult UnRegisterCourseByUser([FromBody] Registration registration)
