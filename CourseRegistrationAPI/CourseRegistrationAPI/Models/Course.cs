@@ -24,6 +24,7 @@ namespace CourseRegistrationAPI.Models
 
         [Required]
         public int StudyPace { get; set; }
+        public string ImageSrc { get; set; }
 
         public ICollection<Registration> Registrations { get; set; }
         public string CourseInfo { get; set; }
