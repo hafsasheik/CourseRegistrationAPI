@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CourseRegistrationAPI.Services;
 
 namespace CourseRegistrationAPI.Controllers
 {
@@ -21,11 +22,12 @@ namespace CourseRegistrationAPI.Controllers
 
         //Authenticate user action with google of some sort..
 
-
-        [HttpGet]
-        public IActionResult GetCoursesForUser(int userid) 
+        [UserAuth]
+        [HttpGet("CoursesForUser")]
+        public IActionResult GetCoursesForUser() 
         {
-            var Courses = _uRepo.GetCoursesByUser(userid);
+            int userId = int.Parse(HttpContext.Items["extractId"].ToString()); //bättre att dra id ur token.
+            var Courses = _uRepo.GetCoursesByUser(userId);
             return Ok(Courses); 
         }
 
@@ -51,10 +53,11 @@ namespace CourseRegistrationAPI.Controllers
             return Ok();
         }
 
-
-        [HttpPost("registerCourse")]
+        [UserAuth]
+        [HttpPost("RegisterCourse")]
         public IActionResult RegisterCourseByUser([FromBody] Registration registration)
         {
+            registration.UserId = int.Parse(HttpContext.Items["extractId"].ToString()); //bättre att dra id ur token.
             if (registration == null)
             {
                 return BadRequest(new { message = "Registration to course failed" });
