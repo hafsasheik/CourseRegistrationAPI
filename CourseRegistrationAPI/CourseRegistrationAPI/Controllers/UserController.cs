@@ -28,7 +28,9 @@ namespace CourseRegistrationAPI.Controllers
         {
             int userId = int.Parse(HttpContext.Items["extractId"].ToString()); //bättre att dra id ur token.
             var Courses = _uRepo.GetCoursesByUser(userId);
-            return Ok(Courses); 
+            var response = Ok(Courses);
+            HttpContext.Response.Headers.Add("NewToken", HttpContext.Items["newToken"].ToString());
+            return response; 
         }
 
 
@@ -65,8 +67,10 @@ namespace CourseRegistrationAPI.Controllers
 
             _uRepo.RegisterToCourseByUser(registration.CourseId, registration.UserId);
 
+            var response = CreatedAtAction("GetCoursesForUser", registration);
+            HttpContext.Response.Headers.Add("NewToken", HttpContext.Items["newToken"].ToString());
 
-            return CreatedAtAction("GetCoursesForUser", registration);
+            return response;
 
         }
 
