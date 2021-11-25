@@ -53,7 +53,7 @@ namespace CourseRegistrationAPI.Services
 
                 string id = SecurityService.Decrypt(AppsettingsSingleton.Instance.JwtEmailEncryption, token.Payload.Sub);
 
-                User u = _context.Users.Find(Guid.Parse(id));
+                User u = _context.Users.Find(int.Parse(id));
                 if (u == null)
                     filterContext.Result = new StatusCodeResult(403);
 
