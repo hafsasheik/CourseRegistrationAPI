@@ -4,6 +4,7 @@ using CourseRegistrationAPI.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -97,7 +98,15 @@ namespace CourseRegistrationAPI.Repository
 
         public bool Save()
         {
-            return _db.SaveChanges() >= 0 ? true : false;
+            try
+            {
+                return _db.SaveChanges() >= 0 ? true : false; //Vad gör denna egentligen?
+            }
+            catch(Exception epicFail) 
+            {
+                Debug.WriteLine(epicFail.Message);
+                return false; //Blir detta rätt?
+            }
         }
     }
 }
