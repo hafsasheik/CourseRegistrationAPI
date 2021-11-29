@@ -4,6 +4,7 @@ using CourseRegistrationAPI.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -21,20 +22,27 @@ namespace CourseRegistrationAPI.Repository
 
         //Register/Login
 
-        public bool RegisterUser(string firstname, string lastname, string email, string password)
+        public bool RegisterUser(string firstname, string lastname, string email, string password, string salt)
         {
-           
-                User user = new User()
-                {
-                    LastName = lastname,
-                    FirstName = firstname,
-                    Email = email, 
-                    Password = password,
+
+            User user = new User()
+            {
+                LastName = lastname,
+                FirstName = firstname,
+                Email = email,
+                Password = password,
+                Salt = salt
                 };
 
                 _db.Users.Add(user);
             return Save(); 
             
+        }
+
+        public User GetUser(int id)
+        {
+            var user = _db.Users.SingleOrDefault(user => user.UserId == id);
+            return user;
         }
 
         public User AuthenticateUser(string Email, string password)
@@ -99,7 +107,15 @@ namespace CourseRegistrationAPI.Repository
 
         public bool Save()
         {
-            return _db.SaveChanges() >= 0 ? true : false;
+            try
+            {
+                return _db.SaveChanges() >= 0 ? true : false; //Vad gör denna egentligen?
+            }
+            catch(Exception epicFail) 
+            {
+                Debug.WriteLine(epicFail.Message);
+                return false; //Blir detta rätt?
+            }
         }
 
         public bool GetCourseDate(int courseid)

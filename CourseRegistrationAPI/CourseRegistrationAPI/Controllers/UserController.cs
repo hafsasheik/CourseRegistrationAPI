@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CourseRegistrationAPI.Services;
+using CourseRegistrationAPI.Data;
 
 namespace CourseRegistrationAPI.Controllers
 {
@@ -15,9 +16,12 @@ namespace CourseRegistrationAPI.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserRepository _uRepo;
-        public UserController(IUserRepository uRepo)
+        private readonly RegCourseDBContext _context;
+
+        public UserController(IUserRepository uRepo, RegCourseDBContext context)
         {
             _uRepo = uRepo;
+            _context = context;
         }
 
         //Authenticate user action with google of some sort..
@@ -29,23 +33,37 @@ namespace CourseRegistrationAPI.Controllers
             int userId = int.Parse(HttpContext.Items["extractId"].ToString()); //bättre att dra id ur token.
             var Courses = _uRepo.GetCoursesByUser(userId);
             var response = Ok(Courses);
-            HttpContext.Response.Headers.Add("NewToken", HttpContext.Items["newToken"].ToString());
+            Response.Headers.Add("Access-Control-Expose-Headers", "NewToken");
+            //ovan måste läggas till för att FE ska kunna läsa headers under cors.
+            Response.Headers.Add("NewToken", HttpContext.Items["newToken"].ToString());
             return response; 
         }
 
-
+        [UserAuth]
+        [HttpGet]
+        public IActionResult GetUser()
+        {
+            int userId = int.Parse(HttpContext.Items["extractId"].ToString());
+            var user = _uRepo.GetUser(userId);
+            if (user is not null)
+            {
+                return Ok(user);
+            }
+            return BadRequest("Couldn't find user");
+        }
 
         [HttpPost("registerUser")]
         public IActionResult RegisterUser([FromBody] User addeduser)
         {
-            bool ifUserEmailExists = _uRepo.IsUniqueUser(addeduser.Email);
+            bool userEmailExists = _uRepo.IsUniqueUser(addeduser.Email);
             
-            if (!ifUserEmailExists)
+            if (!userEmailExists)
             {
                 return BadRequest(new { message = "This email is already registered" });
             }
 
-            var user = _uRepo.RegisterUser(addeduser.FirstName, addeduser.LastName, addeduser.Email, addeduser.Password);
+            addeduser.Salt = SecurityService.GetSalt();
+            var user = _uRepo.RegisterUser(addeduser.FirstName, addeduser.LastName, addeduser.Email, SecurityService.Hasher(addeduser.Password, addeduser.Salt), addeduser.Salt);
 
             if (!user)
             {
@@ -70,21 +88,41 @@ namespace CourseRegistrationAPI.Controllers
 
             }
 
-            _uRepo.RegisterToCourseByUser(registration.CourseId, registration.UserId);
+            Response.Headers.Add("Access-Control-Expose-Headers", "NewToken");
+            //Denna måste läggas till för att FE ska kunna läsa headers under cors.
+            Response.Headers.Add("NewToken", HttpContext.Items["newToken"].ToString());
+
+            if (_uRepo.RegisterToCourseByUser(registration.CourseId, registration.UserId))
+            {
+                Course c = _context.Courses.FirstOrDefault(x => x.CourseId == registration.CourseId);
+                c.RegisteredStudents++;
+                if (c.AvailableSpots >= c.RegisteredStudents)
+                    return StatusCode(409);
+
+                _context.SaveChanges();
+            }
 
             var response = CreatedAtAction("GetCoursesForUser", registration);
-            HttpContext.Response.Headers.Add("NewToken", HttpContext.Items["newToken"].ToString());
 
-            return response;
+            
+            return Ok();
 
         }
-
+        [UserAuth]
         [HttpDelete]
         public IActionResult UnRegisterCourseByUser([FromBody] Registration registration)
         {
-            _uRepo.UnRegisterToCourseByUser(registration.CourseId, registration.UserId);
-
-            return Ok(); 
+            registration.UserId = int.Parse(HttpContext.Items["extractId"].ToString()); //bättre att dra id ur token.
+            if (registration == null)
+            {
+                return BadRequest(new { message = "Registration to course failed" });
+            }
+            if (_uRepo.UnRegisterToCourseByUser(registration.CourseId, registration.UserId))
+                _context.Courses.FirstOrDefault(c => c.CourseId == registration.CourseId).RegisteredStudents--;
+            Response.Headers.Add("Access-Control-Expose-Headers", "NewToken");
+            //Denna måste läggas till för att FE ska kunna läsa headers under cors.
+            Response.Headers.Add("NewToken", HttpContext.Items["newToken"].ToString());
+            return Ok("Course unregistered"); 
         }
 
     }
