@@ -39,6 +39,12 @@ namespace CourseRegistrationAPI.Repository
             
         }
 
+        public User GetUser(int id)
+        {
+            var user = _db.Users.SingleOrDefault(user => user.UserId == id);
+            return user;
+        }
+
         public User AuthenticateUser(string Email, string password)
         {
             var user = _db.Users.SingleOrDefault(x => x.Email == Email && x.Password == password);

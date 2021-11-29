@@ -35,7 +35,18 @@ namespace CourseRegistrationAPI.Controllers
             return response; 
         }
 
-
+        [UserAuth]
+        [HttpGet]
+        public IActionResult GetUser()
+        {
+            int userId = int.Parse(HttpContext.Items["extractId"].ToString());
+            var user = _uRepo.GetUser(userId);
+            if (user is not null)
+            {
+                return Ok(user);
+            }
+            return BadRequest("Couldn't find user");
+        }
 
         [HttpPost("registerUser")]
         public IActionResult RegisterUser([FromBody] User addeduser)
