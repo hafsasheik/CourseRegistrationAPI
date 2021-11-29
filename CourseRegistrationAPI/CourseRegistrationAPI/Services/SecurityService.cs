@@ -1,4 +1,5 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -100,6 +101,31 @@ namespace CourseRegistrationAPI.Services
             var token = new JwtSecurityToken(claims: claims, expires: DateTime.Now.AddMinutes(10), signingCredentials: tokenCreds);
             return new JwtSecurityTokenHandler().WriteToken(token);
 
+        }
+
+        public static string Hasher(string password, string salt)
+        {
+            string compHash = "";
+            using (SHA256Managed sHA256Managed = new SHA256Managed())
+            {
+                byte[] arr = Encoding.UTF8.GetBytes(password + salt);
+                byte[] hash = sHA256Managed.ComputeHash(arr);
+                compHash = Convert.ToBase64String(hash);
+                
+            }
+            return compHash;
+
+        }
+        public static string GetSalt()
+        {
+            string salt = "";
+            using (RNGCryptoServiceProvider r = new RNGCryptoServiceProvider())
+            {
+                byte[] arr = new byte[16];
+                r.GetNonZeroBytes(arr);
+                salt = Convert.ToBase64String(arr);
+            }
+            return salt;
         }
     }
 }

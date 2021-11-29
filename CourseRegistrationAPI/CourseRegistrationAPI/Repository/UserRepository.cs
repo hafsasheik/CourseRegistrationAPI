@@ -22,15 +22,16 @@ namespace CourseRegistrationAPI.Repository
 
         //Register/Login
 
-        public bool RegisterUser(string firstname, string lastname, string email, string password)
+        public bool RegisterUser(string firstname, string lastname, string email, string password, string salt)
         {
-           
-                User user = new User()
-                {
-                    LastName = lastname,
-                    FirstName = firstname,
-                    Email = email, 
-                    Password = password,
+
+            User user = new User()
+            {
+                LastName = lastname,
+                FirstName = firstname,
+                Email = email,
+                Password = password,
+                Salt = salt
                 };
 
                 _db.Users.Add(user);

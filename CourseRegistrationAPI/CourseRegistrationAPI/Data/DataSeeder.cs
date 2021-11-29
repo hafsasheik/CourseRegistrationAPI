@@ -1,4 +1,5 @@
 ﻿using CourseRegistrationAPI.Models;
+using CourseRegistrationAPI.Services;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -11,14 +12,14 @@ namespace CourseRegistrationAPI.Data
     {
         //TODO: Ta reda på hur man seedar en redan migrerad databas, lösningen finns i program!!
         public static void Seed(this ModelBuilder modelbuilder)
-        {       
+        {
 
-
+            string salt = SecurityService.GetSalt(); //Fullösning.
             modelbuilder.Entity<User>().HasData(
-                new User { UserId = 1, FirstName = "Oskar", LastName = "Pustinen", Email = "Oskar@Pustinen.com", Password = "123", },
-                new User { UserId = 2, FirstName = "Nikola", LastName = "Pavlovic", Email = "Nikola@Pavlovic.com", Password = "123", },
-                new User { UserId = 3, FirstName = "Hafsa", LastName = "Sheik", Email = "Hafsa@Sheik.com", Password = "123", },
-                new User { UserId = 4, FirstName = "Eerik", LastName = "Sundberg", Email = "Erik@Sundberg.com", Password = "123", }
+                new User { UserId = 1, FirstName = "Oskar", LastName = "Pustinen", Email = "Oskar@Pustinen.com", Password = SecurityService.Hasher("123", salt), Salt = salt },
+                new User { UserId = 2, FirstName = "Nikola", LastName = "Pavlovic", Email = "Nikola@Pavlovic.com", Password = SecurityService.Hasher("123", salt), Salt = salt },
+                new User { UserId = 3, FirstName = "Hafsa", LastName = "Sheik", Email = "Hafsa@Sheik.com", Password = SecurityService.Hasher("123", salt), Salt = salt },
+                new User { UserId = 4, FirstName = "Eerik", LastName = "Sundberg", Email = "Erik@Sundberg.com", Password = SecurityService.Hasher("123", salt), Salt = salt}
                 );
             modelbuilder.Entity<Course>().HasData(
                 new Course { CourseId = 1, StartDate = DateTime.Now, EndDate = DateTime.Now.AddDays(90), StudyPace = 100, ImageSrc= "https://i1.wp.com/www.hyrobygg.se/wp-content/uploads/2016/03/js-logo.png?fit=500%2C500&ssl=1", Subject = "Javascript", CourseInfo = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Posuere urna nec tincidunt praesent semper feugiat nibh sed." },

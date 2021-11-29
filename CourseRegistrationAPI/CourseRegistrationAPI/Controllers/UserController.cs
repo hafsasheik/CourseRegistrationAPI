@@ -40,14 +40,15 @@ namespace CourseRegistrationAPI.Controllers
         [HttpPost("registerUser")]
         public IActionResult RegisterUser([FromBody] User addeduser)
         {
-            bool ifUserEmailExists = _uRepo.IsUniqueUser(addeduser.Email);
+            bool userEmailExists = _uRepo.IsUniqueUser(addeduser.Email);
             
-            if (!ifUserEmailExists)
+            if (!userEmailExists)
             {
                 return BadRequest(new { message = "This email is already registered" });
             }
 
-            var user = _uRepo.RegisterUser(addeduser.FirstName, addeduser.LastName, addeduser.Email, addeduser.Password);
+            addeduser.Salt = SecurityService.GetSalt();
+            var user = _uRepo.RegisterUser(addeduser.FirstName, addeduser.LastName, addeduser.Email, SecurityService.Hasher(addeduser.Password, addeduser.Salt), addeduser.Salt);
 
             if (!user)
             {
