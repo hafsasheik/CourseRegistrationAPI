@@ -9,6 +9,6 @@ namespace CourseRegistrationAPI.Repository.IRepository
     public interface ICourseRepository
     {
         ICollection<Course> GetCourses();
-        Course GetCourseDetails(int Id);
+        Course GetCourseDetails(Course course);
     }
 }

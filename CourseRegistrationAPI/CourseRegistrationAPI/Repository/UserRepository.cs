@@ -39,6 +39,12 @@ namespace CourseRegistrationAPI.Repository
             
         }
 
+        public User GetUser(int id)
+        {
+            var user = _db.Users.SingleOrDefault(user => user.UserId == id);
+            return user;
+        }
+
         public User AuthenticateUser(string Email, string password)
         {
             var user = _db.Users.SingleOrDefault(x => x.Email == Email && x.Password == password);
@@ -86,6 +92,8 @@ namespace CourseRegistrationAPI.Repository
         }
 
 
+
+
         public bool UnRegisterToCourseByUser(int courseid, int userid)
         {
             Registration registration = new();
@@ -108,6 +116,21 @@ namespace CourseRegistrationAPI.Repository
                 Debug.WriteLine(epicFail.Message);
                 return false; //Blir detta rätt?
             }
+        }
+
+        public bool GetCourseDate(int courseid)
+        {
+            var date = _db.Courses.FirstOrDefault(dt => dt.CourseId == courseid);
+            
+            var coursedate = Convert.ToInt32(Convert.ToString(date.StartDate.Date));
+            var todaysDate = Convert.ToInt32(Convert.ToString(DateTime.Now.Date));
+
+            if(coursedate > todaysDate)
+            {
+                return true; 
+            }
+
+            return false; 
         }
     }
 }

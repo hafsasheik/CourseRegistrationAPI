@@ -27,5 +27,10 @@ namespace CourseRegistrationAPI.Repository
         {
             throw new NotImplementedException();
         }
+
+        public Course GetCourseDetails(Course course)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
