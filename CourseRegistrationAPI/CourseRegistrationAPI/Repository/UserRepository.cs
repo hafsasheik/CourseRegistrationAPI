@@ -84,6 +84,8 @@ namespace CourseRegistrationAPI.Repository
         }
 
 
+
+
         public bool UnRegisterToCourseByUser(int courseid, int userid)
         {
             Registration registration = new();
@@ -98,6 +100,21 @@ namespace CourseRegistrationAPI.Repository
         public bool Save()
         {
             return _db.SaveChanges() >= 0 ? true : false;
+        }
+
+        public bool GetCourseDate(int courseid)
+        {
+            var date = _db.Courses.FirstOrDefault(dt => dt.CourseId == courseid);
+            
+            var coursedate = Convert.ToInt32(Convert.ToString(date.StartDate.Date));
+            var todaysDate = Convert.ToInt32(Convert.ToString(DateTime.Now.Date));
+
+            if(coursedate > todaysDate)
+            {
+                return true; 
+            }
+
+            return false; 
         }
     }
 }

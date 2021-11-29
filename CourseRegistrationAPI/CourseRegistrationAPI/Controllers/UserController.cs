@@ -64,6 +64,11 @@ namespace CourseRegistrationAPI.Controllers
             {
                 return BadRequest(new { message = "Registration to course failed" });
             }
+            if (!_uRepo.GetCourseDate(registration.CourseId))
+            {
+                return BadRequest(new { message = "Registration to course failed. Date expired." });
+
+            }
 
             _uRepo.RegisterToCourseByUser(registration.CourseId, registration.UserId);
 
