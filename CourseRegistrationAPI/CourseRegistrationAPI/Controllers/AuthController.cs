@@ -53,8 +53,8 @@ namespace CourseRegistrationAPI.Controllers
                     string token = SecurityService.CreateToken(u.UserId);
 
 
-                    var response = Ok(token); //ES håller på att fixa så att headern på svaret får en ny token. Se kommentaren nedan
-                    //HttpContext.Response.Headers.Add("NewToken", HttpContext.Items["newToken"].ToString());
+                    var response = Ok(token);
+                    
                     return response;
                 }
             }
