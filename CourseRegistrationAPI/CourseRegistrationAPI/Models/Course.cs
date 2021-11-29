@@ -13,7 +13,9 @@ namespace CourseRegistrationAPI.Models
         [Key]
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
         public int CourseId { get; set; }
-
+        [Required]
+        public int AvailableSpots { get; set; }
+        public int RegisteredStudents { get; set; } = 0;
         public string Subject { get; set; }
 
         [DisplayFormat(DataFormatString = "{0:dd MMM yyyy}")]
