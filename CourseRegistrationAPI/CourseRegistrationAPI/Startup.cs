@@ -3,6 +3,7 @@ using CourseRegistrationAPI.Repository;
 using CourseRegistrationAPI.Repository.IRepository;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -43,6 +44,10 @@ namespace CourseRegistrationAPI
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "CourseRegistrationAPI", Version = "v1" });
             });
+            services.AddControllers().AddNewtonsoftJson(x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+            services.AddControllers().AddNewtonsoftJson(x => x.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore);
+
+
 
             // Enable CORS - apps from other domains to access the api
             services.AddCors(c =>

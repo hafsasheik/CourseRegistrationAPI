@@ -27,7 +27,7 @@ namespace CourseRegistrationAPI.Models
         [Required]
         public string Password { get; set; }
         public string Salt { get; set; }
-        
+        public bool IsAdmin { get; set; }
         public ICollection<Registration> Registrations { get; set; }
 
     }
