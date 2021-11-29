@@ -122,15 +122,18 @@ namespace CourseRegistrationAPI.Repository
         {
             var date = _db.Courses.FirstOrDefault(dt => dt.CourseId == courseid);
             
-            var coursedate = Convert.ToInt32(Convert.ToString(date.StartDate.Date));
-            var todaysDate = Convert.ToInt32(Convert.ToString(DateTime.Now.Date));
+            //var coursedate = Convert.ToInt32(Convert.ToString(date.StartDate.Date));
+            //var todaysDate = Convert.ToInt32(Convert.ToString(DateTime.Now.Date));
+           var result =  DateTime.Compare(date.StartDate.Date, DateTime.Now.Date); 
 
-            if(coursedate > todaysDate)
+            if(result <= 0)
             {
-                return true; 
+                return false; 
             }
-
-            return false; 
+            else
+            {
+                return true;
+            }
         }
     }
 }

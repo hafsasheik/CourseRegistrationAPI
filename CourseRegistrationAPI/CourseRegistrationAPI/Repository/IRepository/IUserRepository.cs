@@ -15,7 +15,6 @@ namespace CourseRegistrationAPI.Repository.IRepository
         bool RegisterToCourseByUser(int Courseid, int Userid);
         bool UnRegisterToCourseByUser(int Courseid, int Userid);
         bool GetCourseDate(int courseid);
-
-
+        object GetUser(int userId);
     }
 }
