@@ -47,8 +47,6 @@ namespace CourseRegistrationAPI
             services.AddControllers().AddNewtonsoftJson(x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
             services.AddControllers().AddNewtonsoftJson(x => x.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore);
 
-
-
             // Enable CORS - apps from other domains to access the api
             services.AddCors(c =>
             {
