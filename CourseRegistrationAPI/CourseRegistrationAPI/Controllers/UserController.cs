@@ -109,7 +109,7 @@ namespace CourseRegistrationAPI.Controllers
 
         }
         [UserAuth]
-        [HttpDelete]
+        [HttpDelete("UnRegisterCourse")]
         public IActionResult UnRegisterCourseByUser([FromBody] Registration registration)
         {
             registration.UserId = int.Parse(HttpContext.Items["extractId"].ToString()); //bättre att dra id ur token.

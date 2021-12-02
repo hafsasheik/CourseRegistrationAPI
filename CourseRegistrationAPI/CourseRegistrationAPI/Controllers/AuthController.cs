@@ -48,7 +48,8 @@ namespace CourseRegistrationAPI.Controllers
             try
             {
                 User u = await _context.Users.FirstOrDefaultAsync(u => u.Email == creds.Email);
-                if (u.Password == SecurityService.Hasher(creds.Password, u.Salt))
+                
+                if (u != null && u.Password == SecurityService.Hasher(creds.Password, u.Salt))
                 {
                     string token = SecurityService.CreateToken(u.UserId);
 
