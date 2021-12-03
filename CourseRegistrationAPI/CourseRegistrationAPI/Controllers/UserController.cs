@@ -45,8 +45,11 @@ namespace CourseRegistrationAPI.Controllers
         {
             int userId = int.Parse(HttpContext.Items["extractId"].ToString());
             var user = _uRepo.GetUser(userId);
+            
             if (user is not null)
             {
+                user.Password = "";
+                user.Salt = "";
                 return Ok(user);
             }
             return BadRequest("Couldn't find user");
@@ -84,25 +87,31 @@ namespace CourseRegistrationAPI.Controllers
             }
             if (!_uRepo.GetCourseDate(registration.CourseId))
             {
-                return BadRequest(new { message = "Registration to course failed. Date expired." });
+                return BadRequest(new { message = "Registration to course failed. Date expired." } );
 
+            }
+            
+            
+
+            try
+            {
+                Course course = _context.Courses.FirstOrDefault(c => c.CourseId == registration.CourseId);
+
+                if (course == null || course.AvailableSpots <= course.RegisteredStudents)
+                    return StatusCode(409);
+
+                _context.Registrations.Add(registration);
+                course.RegisteredStudents++;
+                _context.SaveChanges();
+            }
+            catch(Exception epicFail)
+            {
+                return BadRequest(epicFail.Message);
             }
 
             Response.Headers.Add("Access-Control-Expose-Headers", "NewToken");
             //Denna måste läggas till för att FE ska kunna läsa headers under cors.
             Response.Headers.Add("NewToken", HttpContext.Items["newToken"].ToString());
-
-            if (_uRepo.RegisterToCourseByUser(registration.CourseId, registration.UserId))
-            {
-                Course c = _context.Courses.FirstOrDefault(x => x.CourseId == registration.CourseId);
-                c.RegisteredStudents++;
-                if (c.AvailableSpots >= c.RegisteredStudents)
-                    return StatusCode(409);
-
-                _context.SaveChanges();
-            }
-
-            var response = CreatedAtAction("GetCoursesForUser", registration);
 
             
             return Ok();
@@ -117,8 +126,20 @@ namespace CourseRegistrationAPI.Controllers
             {
                 return BadRequest(new { message = "Registration to course failed" });
             }
-            if (_uRepo.UnRegisterToCourseByUser(registration.CourseId, registration.UserId))
-                _context.Courses.FirstOrDefault(c => c.CourseId == registration.CourseId).RegisteredStudents--;
+            try
+            {
+                _context.Registrations.Remove(registration);
+                Course course = _context.Courses.FirstOrDefault(c => c.CourseId == registration.CourseId);
+                course.RegisteredStudents--;
+                _context.SaveChanges();
+            }
+            catch(Exception epicFail)
+            {
+                return BadRequest(epicFail.Message);
+            }
+                
+            
+
             Response.Headers.Add("Access-Control-Expose-Headers", "NewToken");
             //Denna måste läggas till för att FE ska kunna läsa headers under cors.
             Response.Headers.Add("NewToken", HttpContext.Items["newToken"].ToString());
