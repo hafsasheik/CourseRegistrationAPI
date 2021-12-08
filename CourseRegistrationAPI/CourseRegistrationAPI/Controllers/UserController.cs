@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CourseRegistrationAPI.Services;
 using CourseRegistrationAPI.Data;
+using Google.Apis.Auth;
 
 namespace CourseRegistrationAPI.Controllers
 {
@@ -39,10 +40,11 @@ namespace CourseRegistrationAPI.Controllers
             return response; 
         }
 
-        [UserAuth]
-        [HttpGet]
+		[UserAuth]
+		[HttpGet]
         public IActionResult GetUser()
         {
+
             int userId = int.Parse(HttpContext.Items["extractId"].ToString());
             var user = _uRepo.GetUser(userId);
             
@@ -62,7 +64,7 @@ namespace CourseRegistrationAPI.Controllers
             
             if (!userEmailExists)
             {
-                return BadRequest(new { message = "This email is already registered" });
+                return BadRequest(new { message = "Email-adressen används redan. Försök med en annan." });
             }
 
             addeduser.Salt = SecurityService.GetSalt();
